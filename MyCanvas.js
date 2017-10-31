@@ -11,7 +11,6 @@ class MyCanvas extends Component{
         this.state = {
             penSize: 2,
             strokeColor: '#2f46f7',
-            shadowColor: '#2f46f7',
             flag: false,
             c: null,
             cxt: null,
@@ -34,15 +33,16 @@ class MyCanvas extends Component{
     }
 
     changeColor = (colors) =>{
-        this.setState({
-            strokeColor: colors.hex,
-            shadowBlur: colors.hex,
-        });
-        console.log(colors.hex);
         console.log(colors);
     }
 
     closeColor = (colors) => {
+
+        console.log(colors);
+    }
+
+    // 不绑定blur事件时，当鼠标焦点离开颜色选择器，就会变回默认颜色
+    blurColor = (colors) => {
         console.log(colors);
     }
 
@@ -76,6 +76,8 @@ class MyCanvas extends Component{
             flag : false,
         })
     }
+
+
 
     canvasMouseOut = () => {
         this.setState({
@@ -136,7 +138,9 @@ class MyCanvas extends Component{
                             </Row>
                             <Row style={{ paddingTop: 10 ,width:200  }}>
                                 <ColorPicker onChange={this.changeColor}
+                                             color = {this.state.strokeColor}
                                              onClose={this.closeColor}
+                                             onBlur = {this.blurColor}
                                              type="sketch"
                                 />
                             </Row>
