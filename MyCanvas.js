@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Button, Col, Layout, Row, Select, Modal} from 'antd';
+import {Button, Col, Layout, Row, Select, Modal, InputNumber} from 'antd';
 import './canvas.css';
 import ColorPicker from 'react-color';
 const { Header, Footer, Sider, Content } = Layout;
@@ -13,6 +13,7 @@ class MyCanvas extends Component{
             penSize: 2,
             strokeColor: '#000000',
             flag: false,
+            shadowBlur: 1,
             c: null,
             cxt: null,
             img: new Image(),
@@ -29,9 +30,15 @@ class MyCanvas extends Component{
         this.state.img.src = "./image/58.png";
     };
 
-    selectChange = (value) => {
+    penSizeChange = (value) => {
         this.setState({
             penSize: value,
+        })
+    };
+
+    shadowBlurChange = (value) => {
+        this.setState({
+            shadowBlur: value,
         })
     };
 
@@ -76,7 +83,7 @@ class MyCanvas extends Component{
         cxt.shadowColor = this.state.strokeColor.hex;
         cxt.strokeStyle = this.state.strokeColor.hex;
         cxt.lineWidth = this.state.penSize;
-        cxt.shadowBlur = 2;
+        cxt.shadowBlur = this.state.shadowBlur;
 
         this.setState({
             flag:true,
@@ -111,8 +118,8 @@ class MyCanvas extends Component{
         return(
             <div>
                 <Layout style = {{backgroundColor:'rgba(255,255,255,0)'}}>
-                    <Layout >
-                        <Header style = {{backgroundColor:'#B9B9B9'}}>
+                    <Layout style = {{backgroundColor:'rgba(255,255,255,0)'}}>
+                        <Header >
                             <h1>HTML5 canvas 画板</h1>
                         </Header>
                     </Layout>
@@ -121,7 +128,7 @@ class MyCanvas extends Component{
                     <Layout style = {{backgroundColor:'rgba(255,255,255,0)'}}>
                         <Sider style = {{backgroundColor:'white'}}>
 
-                            <Row  style={{ paddingTop: 10 }}>
+                            <Row  style={{ paddingTop: 10 ,paddingBottom: 10}}>
                                 <Col offset={2} span={9}>
                                     <Button onClick = {this.clearCxt}>清空画布</Button>
                                 </Col>
@@ -129,26 +136,25 @@ class MyCanvas extends Component{
                                     <Button onClick = {this.addImage}>填充图片</Button>
                                 </Col>
                             </Row>
+                            <hr/>
                             <Row style={{ paddingTop: 10 }}>
-                                <Col offset={3} span={6}>
-                                    <label >Pen Size:</label>
+                                <Col offset={3} span={8}>
+                                    <label >Pen  Size :</label>
                                 </Col>
                                 <Col offset={1} span={12}>
-                                    <Select
-                                        showSearch
-                                        style={{ width: "100%" }}
-                                        placeholder="Select a penSize"
-                                        optionFilterProp="children"
-                                        onChange={this.selectChange}
-                                        filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                                    >
-                                        <Option value="2">2</Option>
-                                        <Option value="4">4</Option>
-                                        <Option value="6">6</Option>
-                                        <Option value="8">8</Option>
-                                    </Select>
+                                    <InputNumber min={1} max={20} defaultValue={1} onChange={this.penSizeChange} />
                                 </Col>
                             </Row>
+
+                            <Row style={{ paddingTop: 10 }}>
+                                <Col offset={3} span={8}>
+                                    <label >ShadowBlur:</label>
+                                </Col>
+                                <Col offset={1} span={12}>
+                                    <InputNumber min={1} max={10} defaultValue={1} onChange={this.shadowBlurChange} />
+                                </Col>
+                            </Row>
+
                             <Row style={{ paddingTop: 10 }}>
                                 <Col offset={2} span={20}>
                                     <Button onClick={this.showColorPicker} style = {{width:'100%'}}>Pick Color</Button>
