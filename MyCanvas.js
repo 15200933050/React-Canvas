@@ -18,7 +18,7 @@ class MyCanvas extends Component{
             img: new Image(),
             displayColorPicker: false
         };
-    }
+    };
 
     componentDidMount() {
 
@@ -27,35 +27,35 @@ class MyCanvas extends Component{
             cxt: this.refs.myCanvas.getContext("2d"),
         });
         this.state.img.src = "./image/58.png";
-    }
+    };
 
     selectChange = (value) => {
         this.setState({
             penSize: value,
         })
-    }
+    };
 
     //通过这里修改strokeColor,以及控件中color绑定strokeColor，使得颜色选择器失去了焦点之后会不变回默认颜色
     changeColor = (colors) =>{
         this.setState({
             strokeColor: colors,
         })
-    }
+    };
 
     closeColor = (colors) => {
         console.log(colors);
-    }
+    };
 
     showColorPicker= () => {
         this.setState({
             displayColorPicker: true,
         })
-    }
+    };
     closeColorPicker= () => {
         this.setState({
             displayColorPicker: false,
         })
-    }
+    };
 
     canvasMouseMove = (e) => {
         const cxt = this.state.cxt;
@@ -67,7 +67,7 @@ class MyCanvas extends Component{
             cxt.lineTo(x,y);
             cxt.stroke();
         }
-    }
+    };
 
     //鼠标在画布按下时，根据state修改画笔属性，并启动绘画
     canvasMouseDown = () => {
@@ -81,13 +81,13 @@ class MyCanvas extends Component{
         this.setState({
             flag:true,
         })
-    }
+    };
 
     canvasMouseUp = () => {
         this.setState({
             flag : false,
         })
-    }
+    };
 
 
 
@@ -95,17 +95,17 @@ class MyCanvas extends Component{
         this.setState({
             flag: false,
         })
-    }
+    };
 
     clearCxt = () => {
         const c = this.state.c;
         this.state.cxt.clearRect(0,0,c.width,c.height);
-    }
+    };
 
     addImage = () => {
         this.state.cxt.drawImage(this.state.img,10,10);
         console.log("填充图片")
-    }
+    };
 
     render(){
         return(
@@ -113,7 +113,7 @@ class MyCanvas extends Component{
                 <Layout style = {{backgroundColor:'rgba(255,255,255,0)'}}>
                     <Layout >
                         <Header style = {{backgroundColor:'#B9B9B9'}}>
-                            <h1 >Canvas Demo</h1>
+                            <h1>HTML5 canvas 画板</h1>
                         </Header>
                     </Layout>
 
@@ -173,7 +173,7 @@ class MyCanvas extends Component{
 
                         </Sider>
                         <Content>
-                            <canvas ref="myCanvas" height="700px" width="1200px"   style = {{backgroundColor:'white'}}
+                            <canvas ref="myCanvas" height="700px" width="1200px"  style = {{backgroundColor:'white'}}
                                     onMouseDown={this.canvasMouseDown}
                                     onMouseMove={this.canvasMouseMove}
                                     onMouseUp={this.canvasMouseUp}
