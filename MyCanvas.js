@@ -14,6 +14,7 @@ class MyCanvas extends Component{
             flag: false,
             c: null,
             cxt: null,
+            img: new Image(),
         };
     }
 
@@ -23,7 +24,7 @@ class MyCanvas extends Component{
             c: this.refs.myCanvas,
             cxt: this.refs.myCanvas.getContext("2d"),
         });
-
+        this.state.img.src = "./image/58.png";
     }
 
     selectChange = (value) => {
@@ -32,19 +33,17 @@ class MyCanvas extends Component{
         })
     }
 
+    //通过这里修改strokeColor,以及控件中color绑定strokeColor，使得颜色选择器失去了焦点之后会不变回默认颜色
     changeColor = (colors) =>{
-        console.log(colors);
+        this.setState({
+            strokeColor: colors,
+        })
     }
 
     closeColor = (colors) => {
-
         console.log(colors);
     }
 
-    // 不绑定blur事件时，当鼠标焦点离开颜色选择器，就会变回默认颜色
-    blurColor = (colors) => {
-        console.log(colors);
-    }
 
     canvasMouseMove = (e) => {
         const cxt = this.state.cxt;
@@ -64,8 +63,8 @@ class MyCanvas extends Component{
         const cxt = this.state.cxt;
         cxt.lineWidth = this.state.penSize;
         cxt.shadowBlur = 2;
-        cxt.shadowColor = this.state.shadowColor;
-        cxt.strokeStyle = this.state.strokeColor;
+        cxt.shadowColor = this.state.strokeColor.hex;
+        cxt.strokeStyle = this.state.strokeColor.hex;
         this.setState({
             flag:true,
         })
@@ -91,9 +90,9 @@ class MyCanvas extends Component{
     }
 
     addImage = () => {
-        const img= new Image();
-        img.src = "./image/58.png";
-        this.state.cxt.drawImage(img,10,10);
+        // const img= new Image();
+        // img.src = "./image/58.png";
+        this.state.cxt.drawImage(this.state.img,10,10);
         console.log("填充图片")
     }
 
@@ -101,7 +100,7 @@ class MyCanvas extends Component{
         return(
             <div>
                 <Layout>
-                    <Header>
+                    <Header style = {{backgroundColor:'#D5D7E4'}}>
                         <h1 >Canvas Demo</h1>
                         <hr />
                     </Header>
@@ -140,14 +139,13 @@ class MyCanvas extends Component{
                                 <ColorPicker onChange={this.changeColor}
                                              color = {this.state.strokeColor}
                                              onClose={this.closeColor}
-                                             onBlur = {this.blurColor}
                                              type="sketch"
                                 />
                             </Row>
 
                         </Sider>
                         <Content>
-                            <canvas ref="myCanvas" height="700px" width="1200px"
+                            <canvas ref="myCanvas" height="700px" width="1200px" style = {{backgroundColor:'white'}}
                                     onMouseDown={this.canvasMouseDown}
                                     onMouseMove={this.canvasMouseMove}
                                     onMouseUp={this.canvasMouseUp}
