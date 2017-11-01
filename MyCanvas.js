@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Button, Col, Layout, Row, Select} from 'antd';
+import {Button, Col, Layout, Row, Select, Modal} from 'antd';
 import './canvas.css';
 import ColorPicker from 'react-color';
 const { Header, Footer, Sider, Content } = Layout;
@@ -15,6 +15,7 @@ class MyCanvas extends Component{
             c: null,
             cxt: null,
             img: new Image(),
+            displayColorPicker: false
         };
     }
 
@@ -44,6 +45,16 @@ class MyCanvas extends Component{
         console.log(colors);
     }
 
+    showColorPicker= () => {
+        this.setState({
+            displayColorPicker: true,
+        })
+    }
+    closeColorPicker= () => {
+        this.setState({
+            displayColorPicker: false,
+        })
+    }
 
     canvasMouseMove = (e) => {
         const cxt = this.state.cxt;
@@ -58,13 +69,15 @@ class MyCanvas extends Component{
         }
     }
 
+    //鼠标在画布按下时，根据state修改画笔属性，并启动绘画
     canvasMouseDown = () => {
         this.state.cxt.beginPath();
         const cxt = this.state.cxt;
-        cxt.lineWidth = this.state.penSize;
-        cxt.shadowBlur = 2;
         cxt.shadowColor = this.state.strokeColor.hex;
         cxt.strokeStyle = this.state.strokeColor.hex;
+        cxt.lineWidth = this.state.penSize;
+        cxt.shadowBlur = 2;
+
         this.setState({
             flag:true,
         })
@@ -90,8 +103,6 @@ class MyCanvas extends Component{
     }
 
     addImage = () => {
-        // const img= new Image();
-        // img.src = "./image/58.png";
         this.state.cxt.drawImage(this.state.img,10,10);
         console.log("填充图片")
     }
@@ -116,10 +127,10 @@ class MyCanvas extends Component{
                                 </Col>
                             </Row>
                             <Row style={{ paddingTop: 10 }}>
-                                <Col offset={2} span={6}>
-                                    <label>penSize:</label>
+                                <Col offset={3} span={6}>
+                                    <label >Pen Size:</label>
                                 </Col>
-                                <Col offset={1} span={13}>
+                                <Col offset={1} span={12}>
                                     <Select
                                         showSearch
                                         style={{ width: "100%" }}
@@ -135,12 +146,26 @@ class MyCanvas extends Component{
                                     </Select>
                                 </Col>
                             </Row>
-                            <Row style={{ paddingTop: 10 ,width:200  }}>
-                                <ColorPicker onChange={this.changeColor}
-                                             color = {this.state.strokeColor}
-                                             onClose={this.closeColor}
-                                             type="sketch"
-                                />
+                            <Row style={{ paddingTop: 10 }}>
+                                <Col offset={2} span={20}>
+                                    <Button onClick={this.showColorPicker} style = {{width:'100%'}}>Pick Color</Button>
+                                    <Modal
+                                        width = "260"
+                                        title = "Color Picker"
+                                        visible = {this.state.displayColorPicker}
+                                        footer = {null}
+                                        closable = {false}
+                                        onCancel = {this.closeColorPicker}
+                                    >
+                                        <ColorPicker onChange={this.changeColor}
+                                                     color = {this.state.strokeColor}
+                                                     onClose={this.closeColor}
+                                                     type="sketch"
+                                        />
+                                    </Modal>
+                                </Col>
+
+
                             </Row>
 
                         </Sider>
@@ -156,7 +181,6 @@ class MyCanvas extends Component{
                         </Content>
                     </Layout>
                     <Footer>
-                        <hr />
                     </Footer>
                 </Layout>
             </div>
