@@ -3,6 +3,7 @@ import {Button, Col, Layout, Row, Select, Modal} from 'antd';
 import './canvas.css';
 import ColorPicker from 'react-color';
 const { Header, Footer, Sider, Content } = Layout;
+const Option = Select.Option;
 
 class MyCanvas extends Component{
 
@@ -10,7 +11,7 @@ class MyCanvas extends Component{
         super(props);
         this.state = {
             penSize: 2,
-            strokeColor: '#2f46f7',
+            strokeColor: '#000000',
             flag: false,
             c: null,
             cxt: null,
@@ -63,7 +64,6 @@ class MyCanvas extends Component{
         if(this.state.flag){
             let x = e.clientX - rect.left * (canvas.width / rect.width);
             let y = e.clientY - rect.top * (canvas.height / rect.height);
-            console.log(x + ' , ' + y);
             cxt.lineTo(x,y);
             cxt.stroke();
         }
@@ -110,12 +110,15 @@ class MyCanvas extends Component{
     render(){
         return(
             <div>
-                <Layout>
-                    <Header style = {{backgroundColor:'#D5D7E4'}}>
-                        <h1 >Canvas Demo</h1>
-                        <hr />
-                    </Header>
-                    <Layout>
+                <Layout style = {{backgroundColor:'rgba(255,255,255,0)'}}>
+                    <Layout >
+                        <Header style = {{backgroundColor:'#B9B9B9'}}>
+                            <h1 >Canvas Demo</h1>
+                        </Header>
+                    </Layout>
+
+
+                    <Layout style = {{backgroundColor:'rgba(255,255,255,0)'}}>
                         <Sider style = {{backgroundColor:'white'}}>
 
                             <Row  style={{ paddingTop: 10 }}>
@@ -170,7 +173,7 @@ class MyCanvas extends Component{
 
                         </Sider>
                         <Content>
-                            <canvas ref="myCanvas" height="700px" width="1200px" style = {{backgroundColor:'white'}}
+                            <canvas ref="myCanvas" height="700px" width="1200px"   style = {{backgroundColor:'white'}}
                                     onMouseDown={this.canvasMouseDown}
                                     onMouseMove={this.canvasMouseMove}
                                     onMouseUp={this.canvasMouseUp}
@@ -180,8 +183,8 @@ class MyCanvas extends Component{
                             </canvas>
                         </Content>
                     </Layout>
-                    <Footer>
-                    </Footer>
+                    {/*<Footer>*/}
+                    {/*</Footer>*/}
                 </Layout>
             </div>
         )
