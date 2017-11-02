@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import MyCanvas from './MyCanvas';
+import MyCanvas from './src/js/MyCanvas';
 
 
 ReactDOM.render(

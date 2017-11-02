@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {Button, Col, Layout, Row, Select, Modal, InputNumber} from 'antd';
-import './canvas.css';
+import '../css/canvas.css';
 import ColorPicker from 'react-color';
 const { Header, Footer, Sider, Content } = Layout;
 const Option = Select.Option;
@@ -10,24 +10,23 @@ class MyCanvas extends Component{
     constructor(props) {
         super(props);
         this.state = {
-            penSize: 2,
-            strokeColor: '#000000',
-            flag: false,
-            shadowBlur: 1,
-            c: null,
-            cxt: null,
-            img: new Image(),
-            displayColorPicker: false
+            penSize: 2,                        // 画笔大小
+            strokeColor: '#F14E4E',           // 画笔颜色
+            flag: false,                     // 是否开始作画
+            shadowBlur: 1,                  // 画笔阴影大小
+            c: null,                       // 画布节点
+            cxt: null,                    // 画布实例
+            img: new Image(),            // 填充的图片
+            displayColorPicker: false   // 是否显示颜色选择器
         };
     };
 
     componentDidMount() {
-
         this.setState({
             c: this.refs.myCanvas,
             cxt: this.refs.myCanvas.getContext("2d"),
         });
-        this.state.img.src = "./image/58.png";
+        this.state.img.src = "src/image/58.png";
     };
 
     penSizeChange = (value) => {
@@ -80,10 +79,16 @@ class MyCanvas extends Component{
     canvasMouseDown = () => {
         this.state.cxt.beginPath();
         const cxt = this.state.cxt;
-        cxt.shadowColor = this.state.strokeColor.hex;
-        cxt.strokeStyle = this.state.strokeColor.hex;
-        cxt.lineWidth = this.state.penSize;
         cxt.shadowBlur = this.state.shadowBlur;
+        if(this.state.strokeColor.hex){
+            cxt.shadowColor = this.state.strokeColor.hex;
+            cxt.strokeStyle = this.state.strokeColor.hex;
+        }else {
+            cxt.shadowColor = this.state.strokeColor;
+            cxt.strokeStyle = this.state.strokeColor;
+        }
+
+        cxt.lineWidth = this.state.penSize;
 
         this.setState({
             flag:true,
@@ -151,7 +156,7 @@ class MyCanvas extends Component{
                                     <label >ShadowBlur:</label>
                                 </Col>
                                 <Col offset={1} span={12}>
-                                    <InputNumber min={1} max={10} defaultValue={1} onChange={this.shadowBlurChange} />
+                                    <InputNumber min={0} max={10} defaultValue={0} onChange={this.shadowBlurChange} />
                                 </Col>
                             </Row>
 
@@ -167,8 +172,10 @@ class MyCanvas extends Component{
                                         onCancel = {this.closeColorPicker}
                                     >
                                         <ColorPicker onChange={this.changeColor}
+                                                     ref="colorPicker"
                                                      color = {this.state.strokeColor}
                                                      onClose={this.closeColor}
+                                                     defaultColor='#F14E4E'
                                                      type="sketch"
                                         />
                                     </Modal>
