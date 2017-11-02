@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {Button, Col, Layout, Row, Select, Modal, InputNumber} from 'antd';
 import '../css/canvas.css';
 import ColorPicker from 'react-color';
+
 const { Header, Footer, Sider, Content } = Layout;
 const Option = Select.Option;
 
@@ -10,24 +11,25 @@ class MyCanvas extends Component{
     constructor(props) {
         super(props);
         this.state = {
-            penSize: 2,                        // 画笔大小
-            strokeColor: '#F14E4E',           // 画笔颜色
-            flag: false,                     // 是否开始作画
-            shadowBlur: 1,                  // 画笔阴影大小
-            c: null,                       // 画布节点
-            cxt: null,                    // 画布实例
-            img: new Image(),            // 填充的图片
-            displayColorPicker: false   // 是否显示颜色选择器
+            displayColorPicker: false,   // 是否显示颜色选择器
+            strokeColor: '#F14E4E',     // 画笔颜色
+            img: new Image(),          // 填充的图片
+            shadowBlur: 1,            // 画笔阴影大小
+            flag: false,             // 是否开始作画
+            penSize: 2,             // 画笔大小
+            cxt: null,             // 画布实例
+            c: null,              // 画布节点
         };
     };
 
     componentDidMount() {
         this.setState({
             c: this.refs.myCanvas,
-            cxt: this.refs.myCanvas.getContext("2d"),
+            cxt: this.refs.myCanvas.getContext("2d"), //获得渲染上下文和它的绘画功能 参数表示2D绘图
         });
         this.state.img.src = "src/image/58.png";
     };
+
 
     penSizeChange = (value) => {
         this.setState({
@@ -63,6 +65,7 @@ class MyCanvas extends Component{
         })
     };
 
+    //移动鼠标开始绘图
     canvasMouseMove = (e) => {
         const cxt = this.state.cxt;
         const canvas = this.state.c;
@@ -115,16 +118,16 @@ class MyCanvas extends Component{
     };
 
     addImage = () => {
-        this.state.cxt.drawImage(this.state.img,10,10);
+        this.state.cxt.drawImage(this.state.img,0,0);
         console.log("填充图片")
     };
 
     render(){
         return(
-            <div>
+            <div className="myDiv">
                 <Layout style = {{backgroundColor:'rgba(255,255,255,0)'}}>
-                    <Layout style = {{backgroundColor:'rgba(255,255,255,0)'}}>
-                        <Header >
+                    <Layout >
+                        <Header style = {{backgroundColor:'rgba(255,255,255,0)'}}>
                             <h1>HTML5 canvas 画板</h1>
                         </Header>
                     </Layout>
