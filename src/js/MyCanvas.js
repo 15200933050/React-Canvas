@@ -14,14 +14,12 @@ class MyCanvas extends Component{
         super(props);
         this.state = {
             displayColorPicker: false,    // 是否显示颜色选择器
-            strokeColor: '#F14E4E',      // 画笔颜色
+            drawColor: '#F14E4E',        // 颜色选择器 颜色
             img: new Image(),           // 填充的图片
             drawType: 'line',          // 画笔类型
-            shadowBlur: 1,            // 画笔阴影大小
             preDrawAry:[],           // 画布之前的状态
             isFill: true,           //图形内部是否填充
             flag: false,           // 是否开始作画
-            penSize: 2,           // 画笔大小
             cxt: null,           // 画布实例
             c: null,            // 画布节点
             preX: 0,           // 起始点x坐标
@@ -29,43 +27,53 @@ class MyCanvas extends Component{
         };
     };
 
+
+    //初始化画布的各种属性，赋予画笔默认颜色，型号
     componentDidMount() {
+        let context = this.refs.myCanvas.getContext("2d");
+        context.shadowColor = "#F14E4E";
+        context.strokeStyle = "#F14E4E";
+        context.fillStyle = "#F14E4E";
+        context.shadowBlur = 0;
+        context.lineWidth = 1;
+
         this.setState({
             c: this.refs.myCanvas,
-            cxt: this.refs.myCanvas.getContext("2d"), //获得渲染上下文和它的绘画功能 参数表示2D绘图
+            cxt: context,           //获得渲染上下文和它的绘画功能 参数表示2D绘图
         });
         this.state.img.src = "src/image/58.png";
+
     };
 
-
+    //修改画笔线条大小
     penSizeChange = (value) => {
-        this.setState({
-            penSize: value,
-        })
+        this.state.cxt.lineWidth = value;
     };
 
+    //修改绘画的阴影大小
     shadowBlurChange = (value) => {
-        this.setState({
-            shadowBlur: value,
-        })
+        this.state.cxt.shadowBlur = value;
     };
 
     //通过这里修改strokeColor,以及控件中color绑定strokeColor，使得颜色选择器失去了焦点之后会不变回默认颜色
     changeColor = (colors) =>{
+        const cxt = this.state.cxt;
+        cxt.shadowColor = colors.hex;
+        cxt.strokeStyle = colors.hex;
+        cxt.fillStyle = colors.hex;
+
         this.setState({
-            strokeColor: colors,
+            drawColor: colors,
         })
     };
 
-    closeColor = (colors) => {
-        console.log(colors);
-    };
 
     showColorPicker = () => {
         this.setState({
             displayColorPicker: true,
         })
     };
+
     closeColorPicker = () => {
         this.setState({
             displayColorPicker: false,
@@ -108,24 +116,12 @@ class MyCanvas extends Component{
     canvasMouseDown = (e) => {
         this.state.cxt.beginPath();
         const canvas = this.state.c;
-        const cxt = this.state.cxt;
+
         const rect = canvas.getBoundingClientRect();
         this.setState({
             preX: e.clientX - rect.left * (canvas.width / rect.width),
             preY: e.clientY - rect.top * (canvas.height / rect.height),
-        })
-        cxt.shadowBlur = this.state.shadowBlur;
-        if(this.state.strokeColor.hex){
-            cxt.shadowColor = this.state.strokeColor.hex;
-            cxt.strokeStyle = this.state.strokeColor.hex;
-            cxt.fillStyle = this.state.strokeColor.hex;
-        }else {
-            cxt.shadowColor = this.state.strokeColor;
-            cxt.strokeStyle = this.state.strokeColor;
-            cxt.fillStyle = this.state.strokeColor;
-        }
-
-        cxt.lineWidth = this.state.penSize;
+        });
 
         this.setState({
             flag:true,
@@ -214,8 +210,7 @@ class MyCanvas extends Component{
                                     >
                                         <ColorPicker onChange={this.changeColor}
                                                      ref="colorPicker"
-                                                     color = {this.state.strokeColor}
-                                                     onClose={this.closeColor}
+                                                     color = {this.state.drawColor}
                                                      defaultColor='#F14E4E'
                                                      type="sketch"
                                         />
