@@ -101,7 +101,15 @@ class MyCanvas extends Component{
             if(this.state.drawType === 'line'){
                 cxt.lineTo(x,y);
                 cxt.stroke();
-            }else if(this.state.drawType === 'rect'){
+            }else if(this.state.drawType === 'arc'){
+                let popData = this.state.preDrawAry[this.state.preDrawAry.length - 1];
+                this.state.cxt.putImageData(popData,0,0);
+                let x1 = (this.state.preX + x)/2;
+                let y1 = (this.state.preY + y)/2;
+                let r = Math.sqrt(Math.pow((this.state.preX - x)/2,2) + Math.pow((this.state.preY - y)/2,2));
+                cxt.arc(x1, y1, r, 0, 2*Math.PI);
+                cxt.stroke();
+            } else if(this.state.drawType === 'rect'){
                 //绘图之前清除掉上次移动鼠标绘制出的长方形，重新绘制
                 let popData = this.state.preDrawAry[this.state.preDrawAry.length - 1];
                 this.state.cxt.putImageData(popData,0,0);
@@ -221,7 +229,7 @@ class MyCanvas extends Component{
                                 <RadioGroup onChange={this.changeDrawType} defaultValue="line">
                                     <RadioButton value="line">画笔</RadioButton>
                                     <RadioButton value="rect">长方形</RadioButton>
-                                    <RadioButton value="c" disabled>圆形</RadioButton>
+                                    <RadioButton value="arc">圆形</RadioButton>
                                 </RadioGroup>
                             </Row>
                             <Row style={{ paddingTop: 10 }}>
