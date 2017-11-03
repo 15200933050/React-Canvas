@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
-import {Button, Col, Layout, Row, Select, Modal, InputNumber} from 'antd';
+import {Button, Col, Layout, Row, Select, Modal, InputNumber, Radio} from 'antd';
 import '../css/canvas.css';
 import ColorPicker from 'react-color';
 
+const RadioButton = Radio.Button;
+const RadioGroup = Radio.Group;
 const { Header, Footer, Sider, Content } = Layout;
 const Option = Select.Option;
 
@@ -11,14 +13,19 @@ class MyCanvas extends Component{
     constructor(props) {
         super(props);
         this.state = {
-            displayColorPicker: false,   // 是否显示颜色选择器
-            strokeColor: '#F14E4E',     // 画笔颜色
-            img: new Image(),          // 填充的图片
+            displayColorPicker: false,    // 是否显示颜色选择器
+            strokeColor: '#F14E4E',      // 画笔颜色
+            img: new Image(),           // 填充的图片
+            drawType: 'line',          // 画笔类型
             shadowBlur: 1,            // 画笔阴影大小
-            flag: false,             // 是否开始作画
-            penSize: 2,             // 画笔大小
-            cxt: null,             // 画布实例
-            c: null,              // 画布节点
+            preDrawAry:[],           // 画布之前的状态
+            isFill: true,           //图形内部是否填充
+            flag: false,           // 是否开始作画
+            penSize: 2,           // 画笔大小
+            cxt: null,           // 画布实例
+            c: null,            // 画布节点
+            preX: 0,           // 起始点x坐标
+            preY: 0,          // 起始点y坐标
         };
     };
 
@@ -28,7 +35,6 @@ class MyCanvas extends Component{
             cxt: this.refs.myCanvas.getContext("2d"), //获得渲染上下文和它的绘画功能 参数表示2D绘图
         });
         this.state.img.src = "src/image/58.png";
-        this.state.img.width=1200;
     };
 
 
@@ -55,54 +61,85 @@ class MyCanvas extends Component{
         console.log(colors);
     };
 
-    showColorPicker= () => {
+    showColorPicker = () => {
         this.setState({
             displayColorPicker: true,
         })
     };
-    closeColorPicker= () => {
+    closeColorPicker = () => {
         this.setState({
             displayColorPicker: false,
         })
     };
 
+    changeDrawType = (e) => {
+        this.setState({
+            drawType: e.target.value,
+        });
+        console.log(e.target.value);
+    };
+
     //移动鼠标开始绘图
     canvasMouseMove = (e) => {
-        const cxt = this.state.cxt;
-        const canvas = this.state.c;
-        const rect = canvas.getBoundingClientRect();
+
         if(this.state.flag){
+            const cxt = this.state.cxt;
+            const canvas = this.state.c;
+            const rect = canvas.getBoundingClientRect();
             let x = e.clientX - rect.left * (canvas.width / rect.width);
             let y = e.clientY - rect.top * (canvas.height / rect.height);
-            cxt.lineTo(x,y);
-            cxt.stroke();
+
+            //根据drawType决定作画的类型
+            if(this.state.drawType === 'line'){
+                cxt.lineTo(x,y);
+                cxt.stroke();
+            }else if(this.state.drawType === 'rect'){
+                //绘图之前清除掉上次移动鼠标绘制出的长方形，重新绘制
+                let popData = this.state.preDrawAry[this.state.preDrawAry.length - 1];
+                this.state.cxt.putImageData(popData,0,0);
+                let x1 = this.state.preX;
+                let y1 = this.state.preY;
+                cxt.fillRect(x1, y1, x-x1, y-y1);
+            }
         }
     };
 
     //鼠标在画布按下时，根据state修改画笔属性，并启动绘画
-    canvasMouseDown = () => {
+    canvasMouseDown = (e) => {
         this.state.cxt.beginPath();
+        const canvas = this.state.c;
         const cxt = this.state.cxt;
+        const rect = canvas.getBoundingClientRect();
+        this.setState({
+            preX: e.clientX - rect.left * (canvas.width / rect.width),
+            preY: e.clientY - rect.top * (canvas.height / rect.height),
+        })
         cxt.shadowBlur = this.state.shadowBlur;
         if(this.state.strokeColor.hex){
             cxt.shadowColor = this.state.strokeColor.hex;
             cxt.strokeStyle = this.state.strokeColor.hex;
+            cxt.fillStyle = this.state.strokeColor.hex;
         }else {
             cxt.shadowColor = this.state.strokeColor;
             cxt.strokeStyle = this.state.strokeColor;
+            cxt.fillStyle = this.state.strokeColor;
         }
 
         cxt.lineWidth = this.state.penSize;
 
         this.setState({
             flag:true,
-        })
+        });
+        let preData = this.state.cxt.getImageData(0,0,1200,700);
+        this.state.preDrawAry.push(preData);
     };
 
     canvasMouseUp = () => {
         this.setState({
             flag : false,
-        })
+        });
+        let preData = this.state.cxt.getImageData(0,0,1200,700);
+        this.state.preDrawAry.push(preData);
     };
 
 
@@ -184,7 +221,15 @@ class MyCanvas extends Component{
                                         />
                                     </Modal>
                                 </Col>
-
+                            </Row>
+                            <Row style={{ paddingTop: 10 }}>
+                                <RadioGroup onChange={this.changeDrawType} defaultValue="line">
+                                    <RadioButton value="line">画笔</RadioButton>
+                                    <RadioButton value="rect">长方形</RadioButton>
+                                    <RadioButton value="c" disabled>圆形</RadioButton>
+                                </RadioGroup>
+                            </Row>
+                            <Row style={{ paddingTop: 10 }}>
 
                             </Row>
 
@@ -200,8 +245,6 @@ class MyCanvas extends Component{
                             </canvas>
                         </Content>
                     </Layout>
-                    {/*<Footer>*/}
-                    {/*</Footer>*/}
                 </Layout>
             </div>
         )

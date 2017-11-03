@@ -7,3 +7,6 @@
 - React-Color的ColorPicker
 
 这是一个学习过程，代码里注释会详细说明各个代码段的功能
+
+启动方式，在根目录下运行
+    npm start
