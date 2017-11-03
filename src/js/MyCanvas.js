@@ -28,6 +28,7 @@ class MyCanvas extends Component{
             cxt: this.refs.myCanvas.getContext("2d"), //获得渲染上下文和它的绘画功能 参数表示2D绘图
         });
         this.state.img.src = "src/image/58.png";
+        this.state.img.width=1200;
     };
 
 
