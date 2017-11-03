@@ -18,7 +18,7 @@ class MyCanvas extends Component{
             img: new Image(),           // 填充的图片
             drawType: 'line',          // 画笔类型
             preDrawAry:[],           // 画布之前的状态
-            isFill: true,           //图形内部是否填充
+            isFill: 'true',           //图形内部是否填充
             flag: false,           // 是否开始作画
             cxt: null,           // 画布实例
             c: null,            // 画布节点
@@ -87,6 +87,12 @@ class MyCanvas extends Component{
         console.log(e.target.value);
     };
 
+    changeFill = (e) => {
+        this.setState({
+            isFill: e.target.value
+        })
+    }
+
     //移动鼠标开始绘图
     canvasMouseMove = (e) => {
 
@@ -110,14 +116,23 @@ class MyCanvas extends Component{
                 let y1 = (this.state.preY + y)/2;
                 let r = Math.sqrt(Math.pow((this.state.preX - x)/2,2) + Math.pow((this.state.preY - y)/2,2));
                 cxt.arc(x1, y1, r, 0, 2*Math.PI);
-                cxt.fill();
+                if(this.state.isFill === 'true'){
+                    cxt.fill();
+                }else {
+                    cxt.stroke();
+                }
             } else if(this.state.drawType === 'rect'){
                 //绘图之前清除掉上次移动鼠标绘制出的长方形，重新绘制
                 let popData = this.state.preDrawAry[this.state.preDrawAry.length - 1];
                 this.state.cxt.putImageData(popData,0,0);
                 let x1 = this.state.preX;
                 let y1 = this.state.preY;
-                cxt.fillRect(x1, y1, x-x1, y-y1);
+
+                if(this.state.isFill === 'true'){
+                    cxt.fillRect(x1, y1, x-x1, y-y1);
+                }else {
+                    cxt.strokeRect(x1, y1, x-x1, y-y1);
+                }
             }
         }
     };
@@ -235,7 +250,10 @@ class MyCanvas extends Component{
                                 </RadioGroup>
                             </Row>
                             <Row style={{ paddingTop: 10 }}>
-
+                                <RadioGroup onChange={this.changeFill} defaultValue="true">
+                                    <RadioButton value="true">实心</RadioButton>
+                                    <RadioButton value="false">空心</RadioButton>
+                                </RadioGroup>
                             </Row>
 
                         </Sider>
