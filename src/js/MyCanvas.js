@@ -104,11 +104,13 @@ class MyCanvas extends Component{
             }else if(this.state.drawType === 'arc'){
                 let popData = this.state.preDrawAry[this.state.preDrawAry.length - 1];
                 this.state.cxt.putImageData(popData,0,0);
+                //清除之前绘制的圆形路径
+                cxt.beginPath();
                 let x1 = (this.state.preX + x)/2;
                 let y1 = (this.state.preY + y)/2;
                 let r = Math.sqrt(Math.pow((this.state.preX - x)/2,2) + Math.pow((this.state.preY - y)/2,2));
                 cxt.arc(x1, y1, r, 0, 2*Math.PI);
-                cxt.stroke();
+                cxt.fill();
             } else if(this.state.drawType === 'rect'){
                 //绘图之前清除掉上次移动鼠标绘制出的长方形，重新绘制
                 let popData = this.state.preDrawAry[this.state.preDrawAry.length - 1];
