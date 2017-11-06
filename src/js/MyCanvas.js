@@ -13,13 +13,13 @@ class MyCanvas extends Component{
     constructor(props) {
         super(props);
         this.state = {
-            displayColorPicker: false,    // 是否显示颜色选择器
-            drawColor: '#F14E4E',        // 颜色选择器 颜色
-            img: new Image(),           // 填充的图片
-            drawType: 'line',          // 画笔类型
-            preDrawAry:[],           // 画布之前的状态
-            isFill: 'true',           //图形内部是否填充
-            flag: false,           // 是否开始作画
+            displayColorPicker: false,  // 是否显示颜色选择器
+            drawColor: '#F14E4E',      // 颜色选择器 颜色
+            img: new Image(),         // 填充的图片
+            drawType: 'line',        // 画笔类型
+            preDrawAry:[],          // 画布之前的状态
+            isFill: 'true',        //图形内部是否填充
+            flag: false,          // 是否开始作画
             cxt: null,           // 画布实例
             c: null,            // 画布节点
             preX: 0,           // 起始点x坐标
@@ -36,6 +36,12 @@ class MyCanvas extends Component{
         context.fillStyle = "#F14E4E";
         context.shadowBlur = 0;
         context.lineWidth = 1;
+
+        //线段端点: butt/无效果,round/补充半径为线段宽度一半的半圆,square/补充高度为线段宽度一半的长方形  默认值为butt
+        context.lineCap = 'round';
+        //线段连接处: round/边角磨圆, bevel/割去尖角,miter/线段会在连接处外侧延伸直至交于一点，延伸效果受miterLimit影响。默认是 miter。
+        context.lineJoin = 'round';
+
 
         this.setState({
             c: this.refs.myCanvas,
@@ -91,7 +97,7 @@ class MyCanvas extends Component{
         this.setState({
             isFill: e.target.value
         })
-    }
+    };
 
     //移动鼠标开始绘图
     canvasMouseMove = (e) => {
@@ -177,7 +183,7 @@ class MyCanvas extends Component{
     };
 
     addImage = () => {
-        this.state.cxt.drawImage(this.state.img,0,0);
+        this.state.cxt.drawImage(this.state.img,0,0,300,300);
         console.log("填充图片")
     };
 
