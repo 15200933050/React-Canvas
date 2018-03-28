@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import './theme.less';
 import MyCanvas from './src/js/MyCanvas';
 
 

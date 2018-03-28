@@ -28,7 +28,7 @@ class MyCanvas extends Component{
     };
 
 
-    //初始化画布的各种属性，赋予画笔默认颜色，型号
+    // 初始化画布的各种属性，赋予画笔默认颜色，型号
     componentDidMount() {
         let context = this.refs.myCanvas.getContext("2d");
         context.shadowColor = "#F14E4E";
@@ -37,9 +37,9 @@ class MyCanvas extends Component{
         context.shadowBlur = 0;
         context.lineWidth = 1;
 
-        //线段端点: butt/无效果,round/补充半径为线段宽度一半的半圆,square/补充高度为线段宽度一半的长方形  默认值为butt
+        // 线段端点: butt/无效果,round/补充半径为线段宽度一半的半圆,square/补充高度为线段宽度一半的长方形  默认值为butt
         context.lineCap = 'round';
-        //线段连接处: round/边角磨圆, bevel/割去尖角,miter/线段会在连接处外侧延伸直至交于一点，延伸效果受miterLimit影响。默认是 miter。
+        // 线段连接处: round/边角磨圆, bevel/割去尖角,miter/线段会在连接处外侧延伸直至交于一点，延伸效果受miterLimit影响。默认是 miter。
         context.lineJoin = 'round';
 
 
@@ -51,17 +51,17 @@ class MyCanvas extends Component{
 
     };
 
-    //修改画笔线条大小
+    // 修改画笔线条大小
     penSizeChange = (value) => {
         this.state.cxt.lineWidth = value;
     };
 
-    //修改绘画的阴影大小
+    // 修改绘画的阴影大小
     shadowBlurChange = (value) => {
         this.state.cxt.shadowBlur = value;
     };
 
-    //通过这里修改strokeColor,以及控件中color绑定strokeColor，使得颜色选择器失去了焦点之后会不变回默认颜色
+    // 通过这里修改strokeColor,以及控件中color绑定strokeColor，使得颜色选择器失去了焦点之后会不变回默认颜色
     changeColor = (colors) =>{
         const cxt = this.state.cxt;
         cxt.shadowColor = colors.hex;
@@ -99,7 +99,7 @@ class MyCanvas extends Component{
         })
     };
 
-    //移动鼠标开始绘图
+    // 移动鼠标开始绘图
     canvasMouseMove = (e) => {
 
         if(this.state.flag){
@@ -170,18 +170,20 @@ class MyCanvas extends Component{
     };
 
 
-
+    //鼠标移除画布的时候取消绘画
     canvasMouseOut = () => {
         this.setState({
             flag: false,
         })
     };
 
+    //清空画布
     clearCxt = () => {
         const c = this.state.c;
         this.state.cxt.clearRect(0,0,c.width,c.height);
     };
 
+    //在画布上展示图片
     addImage = () => {
         this.state.cxt.drawImage(this.state.img,0,0,300,300);
         console.log("填充图片")
