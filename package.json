@@ -8,6 +8,7 @@
     "react": "^15.1.0",
     "react-color": "^2.13.8",
     "react-dom": "^15.1.0",
+    "reactcss": "^1.2.3",
     "src": "^1.1.2"
   },
   "devDependencies": {

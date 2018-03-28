@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import {Button, Col, Layout, Row, Select, Modal, InputNumber, Radio} from 'antd';
 import '../css/canvas.css';
 import ColorPicker from 'react-color';
+import reactCSS from 'reactcss'
+
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -13,8 +15,11 @@ class MyCanvas extends Component{
     constructor(props) {
         super(props);
         this.state = {
+            colorVisible: false,
             displayColorPicker: false,  // 是否显示颜色选择器
-            drawColor: '#F14E4E',      // 颜色选择器 颜色
+            drawColor: {
+                hex: '#F14E4E',
+            },     // 颜色选择器 颜色
             img: new Image(),         // 填充的图片
             drawType: 'line',        // 画笔类型
             preDrawAry:[],          // 画布之前的状态
@@ -91,6 +96,7 @@ class MyCanvas extends Component{
             drawType: e.target.value,
         });
         console.log(e.target.value);
+        console.log(this.state.drawColor.hex);
     };
 
     changeFill = (e) => {
@@ -157,6 +163,7 @@ class MyCanvas extends Component{
         this.setState({
             flag:true,
         });
+        // 保存绘画记录
         let preData = this.state.cxt.getImageData(0,0,1200,700);
         this.state.preDrawAry.push(preData);
     };
@@ -189,7 +196,61 @@ class MyCanvas extends Component{
         console.log("填充图片")
     };
 
+    handleChangeColor = (color) => {
+        const cxt = this.state.cxt;
+        cxt.shadowColor = color.hex;
+        cxt.strokeStyle = color.hex;
+        cxt.fillStyle = color.hex;
+
+        this.setState({
+            drawColor: color
+        });
+    };
+
+    handleCloseColor = () => {
+        this.setState({
+            colorVisible: false,
+        });
+    };
+
+    handleClickColor = () => {
+        this.setState({
+            colorVisible: !this.state.colorVisible,
+        });
+    };
+
     render(){
+
+        const styles = reactCSS({
+            'default': {
+                color: {
+                    width: '50px',
+                    height: '20px',
+                    borderRadius: '2px',
+                    background: this.state.drawColor.hex ,
+                },
+                swatch: {
+                    padding: '5px',
+                    background: '#fff',
+                    borderRadius: '1px',
+                    boxShadow: '0 0 0 1px rgba(0,0,0,.1)',
+                    display: 'inline-block',
+                    cursor: 'pointer',
+                },
+                popover: {
+                    position: 'absolute',
+                    zIndex: '2',
+                },
+                cover: {
+                    position: 'fixed',
+                    top: '0px',
+                    right: '0px',
+                    bottom: '0px',
+                    left: '0px',
+                },
+            },
+        });
+
         return(
             <div className="myDiv">
                 <Layout style = {{backgroundColor:'rgba(255,255,255,0)'}}>
@@ -230,26 +291,28 @@ class MyCanvas extends Component{
                                 </Col>
                             </Row>
 
-                            <Row style={{ paddingTop: 10 }}>
-                                <Col offset={2} span={20}>
-                                    <Button onClick={this.showColorPicker} style = {{width:'100%'}}>Pick Color</Button>
-                                    <Modal
-                                        width = "260"
-                                        title = "Color Picker"
-                                        visible = {this.state.displayColorPicker}
-                                        footer = {null}
-                                        closable = {false}
-                                        onCancel = {this.closeColorPicker}
-                                    >
-                                        <ColorPicker onChange={this.changeColor}
-                                                     ref="colorPicker"
-                                                     color = {this.state.drawColor}
-                                                     defaultColor='#F14E4E'
-                                                     type="sketch"
-                                        />
-                                    </Modal>
-                                </Col>
-                            </Row>
+                            {/*<Row style={{ paddingTop: 10 }}>*/}
+                                {/*<Col offset={2} span={20}>*/}
+                                    {/*<Button onClick={this.showColorPicker} style = {{width:'100%'}}>Pick Color</Button>*/}
+                                    {/*<Modal*/}
+                                        {/*width = "260"*/}
+                                        {/*title = "Color Picker"*/}
+                                        {/*visible = {this.state.displayColorPicker}*/}
+                                        {/*footer = {null}*/}
+                                        {/*closable = {false}*/}
+                                        {/*onCancel = {this.closeColorPicker}*/}
+                                    {/*>*/}
+                                        {/*<ColorPicker onChange={this.changeColor}*/}
+                                                     {/*ref="colorPicker"*/}
+                                                     {/*color = {this.state.drawColor}*/}
+                                                     {/*defaultColor='#F14E4E'*/}
+                                                     {/*type="sketch"*/}
+                                        {/*/>*/}
+                                    {/*</Modal>*/}
+                                {/*</Col>*/}
+                            {/*</Row>*/}
+
+
                             <Row style={{ paddingTop: 10 }}>
                                 <RadioGroup onChange={this.changeDrawType} defaultValue="line">
                                     <RadioButton value="line">画笔</RadioButton>
@@ -262,6 +325,33 @@ class MyCanvas extends Component{
                                     <RadioButton value="true">实心</RadioButton>
                                     <RadioButton value="false">空心</RadioButton>
                                 </RadioGroup>
+                            </Row>
+
+                            <Row style={{ paddingTop: 10 }}>
+                                <Col offset={3} span={6}>
+                                    <label >颜色:</label>
+                                </Col>
+                                <Col offset={1} span={12}>
+                                    <div>
+                                        <div style={ styles.swatch }>
+                                            <div style={ styles.color } onClick={this.handleClickColor} >
+                                            </div>
+                                        </div>
+                                        {
+                                            this.state.colorVisible ?
+                                                <div style={ styles.popover } >
+                                                    <div style={ styles.cover } onClick={ this.handleCloseColor } />
+                                                    <ColorPicker onChange={this.handleChangeColor}
+                                                                 ref="colorPicker"
+                                                                 color = {this.state.drawColor}
+                                                                 defaultColor='#F14E4E'
+                                                                 type="sketch"
+                                                    />
+                                                </div>
+                                                : null
+                                        }
+                                    </div>
+                                </Col>
                             </Row>
 
                         </Sider>
