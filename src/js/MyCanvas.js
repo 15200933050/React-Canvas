@@ -16,10 +16,10 @@ class MyCanvas extends Component{
         super(props);
         this.state = {
             colorVisible: false,
-            displayColorPicker: false,  // 是否显示颜色选择器
+            displayColorPicker: false,    // 是否显示颜色选择器
             drawColor: {
-                hex: '#F14E4E',
-            },     // 颜色选择器 颜色
+                hex: '#F14E4E',         // 颜色选择器 颜色
+            },
             img: new Image(),         // 填充的图片
             drawType: 'line',        // 画笔类型
             preDrawAry:[],          // 画布之前的状态
@@ -66,30 +66,6 @@ class MyCanvas extends Component{
         this.state.cxt.shadowBlur = value;
     };
 
-    // 通过这里修改strokeColor,以及控件中color绑定strokeColor，使得颜色选择器失去了焦点之后会不变回默认颜色
-    changeColor = (colors) =>{
-        const cxt = this.state.cxt;
-        cxt.shadowColor = colors.hex;
-        cxt.strokeStyle = colors.hex;
-        cxt.fillStyle = colors.hex;
-
-        this.setState({
-            drawColor: colors,
-        })
-    };
-
-
-    showColorPicker = () => {
-        this.setState({
-            displayColorPicker: true,
-        })
-    };
-
-    closeColorPicker = () => {
-        this.setState({
-            displayColorPicker: false,
-        })
-    };
 
     changeDrawType = (e) => {
         this.setState({
@@ -196,6 +172,7 @@ class MyCanvas extends Component{
         console.log("填充图片")
     };
 
+    // 通过这里修改strokeColor,以及控件中color绑定strokeColor，使得颜色选择器失去了焦点之后会不变回默认颜色
     handleChangeColor = (color) => {
         const cxt = this.state.cxt;
         cxt.shadowColor = color.hex;
@@ -220,7 +197,6 @@ class MyCanvas extends Component{
     };
 
     render(){
-
         const styles = reactCSS({
             'default': {
                 color: {
