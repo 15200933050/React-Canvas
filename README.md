@@ -10,4 +10,4 @@
 
 启动方式，在根目录下运行
 
-    npm start
+    npm run start

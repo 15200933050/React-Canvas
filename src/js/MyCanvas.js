@@ -15,6 +15,8 @@ class MyCanvas extends Component{
     constructor(props) {
         super(props);
         this.state = {
+            siderWidth: '400',
+            canvasWidth: '1200',
             colorVisible: false,
             displayColorPicker: false,    // 是否显示颜色选择器
             drawColor: {
@@ -32,7 +34,6 @@ class MyCanvas extends Component{
         };
     };
 
-
     // 初始化画布的各种属性，赋予画笔默认颜色，型号
     componentDidMount() {
         let context = this.refs.myCanvas.getContext("2d");
@@ -47,13 +48,29 @@ class MyCanvas extends Component{
         // 线段连接处: round/边角磨圆, bevel/割去尖角,miter/线段会在连接处外侧延伸直至交于一点，延伸效果受miterLimit影响。默认是 miter。
         context.lineJoin = 'round';
 
-
         this.setState({
             c: this.refs.myCanvas,
             cxt: context,           //获得渲染上下文和它的绘画功能 参数表示2D绘图
         });
         this.state.img.src = "src/image/58.png";
 
+        window.addEventListener('resize', this.onWindowResize);
+        this.onWindowResize();
+
+    };
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.onWindowResize)
+    }
+
+    onWindowResize = () => {
+        if (document.documentElement && document.documentElement.clientHeight && document.documentElement.clientWidth) {
+            let winWidth = document.documentElement.clientWidth - 200;
+            console.log(winWidth);
+            this.setState({
+                canvasWidth: winWidth
+            })
+        }
     };
 
     // 修改画笔线条大小
@@ -91,22 +108,22 @@ class MyCanvas extends Component{
             let x = e.clientX - rect.left * (canvas.width / rect.width);
             let y = e.clientY - rect.top * (canvas.height / rect.height);
 
-            //根据drawType决定作画的类型
-            if(this.state.drawType === 'line'){
+            // 根据drawType决定作画的类型
+            if (this.state.drawType === 'line') {
                 cxt.lineTo(x,y);
                 cxt.stroke();
-            }else if(this.state.drawType === 'arc'){
+            } else if (this.state.drawType === 'arc') {
                 let popData = this.state.preDrawAry[this.state.preDrawAry.length - 1];
                 this.state.cxt.putImageData(popData,0,0);
-                //清除之前绘制的圆形路径
+                // 清除之前绘制的圆形路径
                 cxt.beginPath();
                 let x1 = (this.state.preX + x)/2;
                 let y1 = (this.state.preY + y)/2;
                 let r = Math.sqrt(Math.pow((this.state.preX - x)/2,2) + Math.pow((this.state.preY - y)/2,2));
                 cxt.arc(x1, y1, r, 0, 2*Math.PI);
-                if(this.state.isFill === 'true'){
+                if (this.state.isFill === 'true'){
                     cxt.fill();
-                }else {
+                } else {
                     cxt.stroke();
                 }
             } else if(this.state.drawType === 'rect'){
@@ -116,16 +133,16 @@ class MyCanvas extends Component{
                 let x1 = this.state.preX;
                 let y1 = this.state.preY;
 
-                if(this.state.isFill === 'true'){
+                if (this.state.isFill === 'true'){
                     cxt.fillRect(x1, y1, x-x1, y-y1);
-                }else {
+                } else {
                     cxt.strokeRect(x1, y1, x-x1, y-y1);
                 }
             }
         }
     };
 
-    //鼠标在画布按下时，根据state修改画笔属性，并启动绘画
+    // 鼠标在画布按下时，根据state修改画笔属性，并启动绘画
     canvasMouseDown = (e) => {
         this.state.cxt.beginPath();
         const canvas = this.state.c;
@@ -140,7 +157,7 @@ class MyCanvas extends Component{
             flag:true,
         });
         // 保存绘画记录
-        let preData = this.state.cxt.getImageData(0,0,1200,700);
+        let preData = this.state.cxt.getImageData(0,0,this.state.canvasWidth,700);
         this.state.preDrawAry.push(preData);
     };
 
@@ -148,25 +165,25 @@ class MyCanvas extends Component{
         this.setState({
             flag : false,
         });
-        let preData = this.state.cxt.getImageData(0,0,1200,700);
+        let preData = this.state.cxt.getImageData(0,0,this.state.canvasWidth,700);
         this.state.preDrawAry.push(preData);
     };
 
 
-    //鼠标移除画布的时候取消绘画
+    // 鼠标移除画布的时候取消绘画
     canvasMouseOut = () => {
         this.setState({
             flag: false,
         })
     };
 
-    //清空画布
+    // 清空画布
     clearCxt = () => {
         const c = this.state.c;
         this.state.cxt.clearRect(0,0,c.width,c.height);
     };
 
-    //在画布上展示图片
+    // 在画布上展示图片
     addImage = () => {
         this.state.cxt.drawImage(this.state.img,0,0,300,300);
         console.log("填充图片")
@@ -232,13 +249,13 @@ class MyCanvas extends Component{
                 <Layout style = {{backgroundColor:'rgba(255,255,255,0)'}}>
                     <Layout >
                         <Header style = {{backgroundColor:'rgba(255,255,255,0)'}}>
-                            <h1>HTML5 canvas 画板</h1>
+                            <h1  style = {{backgroundColor:'rgba(255,255,255,0)'}}>HTML5 canvas 画板</h1>
                         </Header>
                     </Layout>
 
 
                     <Layout style = {{backgroundColor:'rgba(255,255,255,0)'}}>
-                        <Sider style = {{backgroundColor:'white'}}>
+                        <Sider style = {{backgroundColor:'white', width: this.state.siderWidth}}>
 
                             <Row  style={{ paddingTop: 10 ,paddingBottom: 10}}>
                                 <Col offset={2} span={9}>
@@ -332,7 +349,7 @@ class MyCanvas extends Component{
 
                         </Sider>
                         <Content>
-                            <canvas ref="myCanvas" height="700px" width="1200px"  style = {{backgroundColor:'white'}}
+                            <canvas ref="myCanvas" height="700" width={this.state.canvasWidth}  style = {{backgroundColor:'white'}}
                                     onMouseDown={this.canvasMouseDown}
                                     onMouseMove={this.canvasMouseMove}
                                     onMouseUp={this.canvasMouseUp}
