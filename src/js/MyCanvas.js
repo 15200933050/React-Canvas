@@ -54,6 +54,7 @@ class MyCanvas extends Component{
         });
         this.state.img.src = "src/image/58.png";
 
+        // 挂载浏览器窗口大小变化事件
         window.addEventListener('resize', this.onWindowResize);
         this.onWindowResize();
 
@@ -69,7 +70,10 @@ class MyCanvas extends Component{
             console.log(winWidth);
             this.setState({
                 canvasWidth: winWidth
-            })
+            });
+            // 变化canvas的长宽会导致画布重新生成，重新填充画布的内容
+            let popData = this.state.preDrawAry[this.state.preDrawAry.length - 1];
+            this.state.cxt.putImageData(popData,0,0);
         }
     };
 
@@ -100,13 +104,17 @@ class MyCanvas extends Component{
 
     // 移动鼠标开始绘图
     canvasMouseMove = (e) => {
-
         if(this.state.flag){
+            const color = this.state.drawColor;
             const cxt = this.state.cxt;
             const canvas = this.state.c;
             const rect = canvas.getBoundingClientRect();
             let x = e.clientX - rect.left * (canvas.width / rect.width);
             let y = e.clientY - rect.top * (canvas.height / rect.height);
+
+            cxt.shadowColor = color.hex;
+            cxt.strokeStyle = color.hex;
+            cxt.fillStyle = color.hex;
 
             // 根据drawType决定作画的类型
             if (this.state.drawType === 'line') {
@@ -117,17 +125,17 @@ class MyCanvas extends Component{
                 this.state.cxt.putImageData(popData,0,0);
                 // 清除之前绘制的圆形路径
                 cxt.beginPath();
-                let x1 = (this.state.preX + x)/2;
-                let y1 = (this.state.preY + y)/2;
-                let r = Math.sqrt(Math.pow((this.state.preX - x)/2,2) + Math.pow((this.state.preY - y)/2,2));
-                cxt.arc(x1, y1, r, 0, 2*Math.PI);
+                let x1 = (this.state.preX + x) / 2;
+                let y1 = (this.state.preY + y) / 2;
+                let r = Math.sqrt(Math.pow((this.state.preX - x) / 2, 2) + Math.pow((this.state.preY - y) / 2, 2));
+                cxt.arc(x1, y1, r, 0, 2 * Math.PI);
                 if (this.state.isFill === 'true'){
                     cxt.fill();
                 } else {
                     cxt.stroke();
                 }
             } else if(this.state.drawType === 'rect'){
-                //绘图之前清除掉上次移动鼠标绘制出的长方形，重新绘制
+                // 绘图之前清除掉上次移动鼠标绘制出的长方形，重新绘制
                 let popData = this.state.preDrawAry[this.state.preDrawAry.length - 1];
                 this.state.cxt.putImageData(popData,0,0);
                 let x1 = this.state.preX;
@@ -192,9 +200,6 @@ class MyCanvas extends Component{
     // 通过这里修改strokeColor,以及控件中color绑定strokeColor，使得颜色选择器失去了焦点之后会不变回默认颜色
     handleChangeColor = (color) => {
         const cxt = this.state.cxt;
-        cxt.shadowColor = color.hex;
-        cxt.strokeStyle = color.hex;
-        cxt.fillStyle = color.hex;
 
         this.setState({
             drawColor: color
